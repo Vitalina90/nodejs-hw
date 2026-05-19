@@ -2,6 +2,8 @@
 .DS_Store
 .idea
 
+README.md
+
 # Logs
 logs
 *.log
