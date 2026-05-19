@@ -5,6 +5,8 @@ import 'dotenv/config';
 
 const app = express();
 
+const PORT = process.env.PORT || 3000;
+
 app.use(cors());
 
 app.use(express.json());
@@ -38,11 +40,11 @@ app.use((req, res) => {
 app.use((err, req, res, next) => {
   const isProd = process.env.NODE_ENV === 'production';
 
-  req.status(500).json({
+  res.status(500).json({
     message: isProd ? 'Server error' : err.message,
   });
 });
 
-app.listen(process.env.PORT, () => {
-  console.log(`Server is running on localhost:${process.env.PORT}`);
+app.listen(PORT, () => {
+  console.log(`Server is running on localhost:${PORT}`);
 });
