@@ -1,60 +1,42 @@
 import express from 'express';
 import cors from 'cors';
-import { pinoHttp } from 'pino-http';
 // Завантажує змінні середовища
 import 'dotenv/config';
+import { connectMongoDB } from './db/connectMongoDB.js';
+import { notFoundHandler } from './middleware/notFoundHandler.js';
+import { errorHandler } from './middleware/errorHandler.js';
+import { logger } from './middleware/logger.js';
+import router from './routes/notesRoutes.js';
 
 const app = express();
 
 const PORT = process.env.PORT || 3000;
 
 // Middleware -дозволяє робити запити з інших доменів
-app.use(cors());
+app.use(
+  cors({
+    methods: ['GET', 'POST', 'PATCH', 'DELETE'],
+    origin: '*', // який фронтенд взаємодіє з бекендом
+  }),
+);
 
 // Middleware - дозволяє обробляти дані у форматі JSON, які надходять у body запиту
+// Content-type:application/json, додає тіло запиту на req.body для контролерів
 app.use(express.json());
 
 // Middleware - інтегрує логування HTTP-запитів
-app.use(pinoHttp());
+app.use(logger);
 
-// GET зареєструвати обробник маршрута (повертає всі маршрути)
-// app.get(шлях, ф-ція-обробник/контролер)
-
-app.get('/notes', (req, res) => {
-  res.status(200).json({
-    message: 'Retrieved all notes',
-  });
-});
-
-// Повертає одну нотатку за її ідентифікатором
-app.get('/notes/:noteId', (req, res) => {
-  const { noteId } = req.params;
-
-  res.status(200).json({
-    message: `Retrieved note with ID: ${noteId}`,
-  });
-});
-
-// спеціальний тестовий маршрут для імітації виникнення помилки
-app.get('/test-error', () => {
-  throw new Error('Simulated server error');
-});
+// Middleware - оголошення маршрутів
+app.use(router);
 
 // Мiddleware для обробки всіх запитів, що не відповідають жодному наявному маршруту
-app.use((req, res) => {
-  res.status(404).json({
-    message: 'Route not found',
-  });
-});
+app.use(notFoundHandler);
 
-app.use((err, req, res, next) => {
-  const isProd = process.env.NODE_ENV === 'production';
+app.use(errorHandler);
 
-  // Мiddleware що перехоплює помилки
-  res.status(500).json({
-    message: isProd ? 'Server error' : err.message,
-  });
-});
+// виклик ф-ції підключення бази даних
+await connectMongoDB();
 
 app.listen(PORT, () => {
   console.log(`Server is running on localhost:${PORT}`);
