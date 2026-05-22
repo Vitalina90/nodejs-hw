@@ -16,8 +16,6 @@ export const getNoteById = async (req, res) => {
 
   if (!note) {
     throw createHttpError(404, 'Note not found');
-    // return res.status(404).json({ message: 'Student not found' });
-    // throw new Error('Student not found');
   }
 
   res.status(200).json(note);
@@ -39,7 +37,7 @@ export const deleteNote = async (req, res) => {
     throw createHttpError(404, 'Note not found');
   }
 
-  res.status(200).json({ message: 'deleted' });
+  res.status(200).json(note);
 };
 
 // PATCH - часткове оновлення ресурсу
