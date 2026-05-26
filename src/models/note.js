@@ -18,7 +18,6 @@ const noteSchema = new Schema(
       type: String,
       enum: TAGS, // перелік допустимих значень (наприклад, для gender)
       default: 'Todo',
-      index: true,
     },
   },
   {
