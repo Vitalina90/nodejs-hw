@@ -5,8 +5,44 @@ import { Note } from '../models/note.js';
 
 // GET - отримує всі
 export const getAllNotes = async (req, res) => {
-  const notes = await Note.find(); // метод, що читає всю колекцію
-  res.status(200).json(notes);
+  // Отримуємо параметри запиту
+  const { page = 1, perPage = 10, tag, search } = req.query;
+  const skip = (page - 1) * perPage;
+  const limit = perPage;
+
+  // Створюємо базовий запит
+  const myQuery = Note.find(); // підготовка, налаштування Query
+
+  // Будуємо фільтр
+  if (tag) {
+    myQuery.where({ tag });
+  }
+
+  if (search) {
+    myQuery.where({
+      $or: [
+        { title: { $regex: search, $options: 'i' } },
+        // регулярні вирази для пошуку в середині рядка
+        { content: { $regex: search, $options: 'i' } },
+      ],
+    });
+  }
+
+  // Пагінація
+  const [totalNotes, notes] = await Promise.all([
+    myQuery.clone().countDocuments(), // totalNotes повертає загальну к-сть документів в колекції + clone
+    myQuery.skip(skip).limit(limit), // notes метод, що читає всю колекцію, пошук по пагінaції, фільтр skip/limit
+  ]);
+
+  const totalPages = Math.ceil(totalNotes / limit); // загальна к-сть сторінок
+
+  res.status(200).json({
+    page,
+    perPage,
+    totalNotes,
+    totalPages,
+    notes,
+  });
 };
 
 // повертає одну нотатку за її ідентифікатором

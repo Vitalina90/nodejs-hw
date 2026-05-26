@@ -1,4 +1,5 @@
 import { Schema, model } from 'mongoose';
+import { TAGS } from '../constants/tags.js';
 
 // оголошуємо схему-колекції (документ), його властивості (склад, тип і т.д)
 const noteSchema = new Schema(
@@ -15,28 +16,19 @@ const noteSchema = new Schema(
     },
     tag: {
       type: String,
-      enum: [
-        'Work',
-        'Personal',
-        'Meeting',
-        'Shopping',
-        'Ideas',
-        'Travel',
-        'Finance',
-        'Health',
-        'Important',
-        'Todo',
-      ], // перелік допустимих значень (наприклад, для gender)
+      enum: TAGS, // перелік допустимих значень (наприклад, для gender)
       default: 'Todo',
+      index: true,
     },
   },
   {
     timestamps: true, // автоматично додає createdAt і updatedAt
-    // createdAt - дата створення об'єкта/документа
-    // updatedAt - дата останнього редагування
-    // versionKey: false — вимикає службове поле __v
+    versionKey: false, //  — вимикає службове поле __v
   },
 );
+
+// Single field index — індекс по одному полю
+noteSchema.index({ tag: 1 });
 
 //створюємо модель
 export const Note = model('Note', noteSchema);

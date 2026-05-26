@@ -1,11 +1,13 @@
 import express from 'express';
-import cors from 'cors';
 // Завантажує змінні середовища
 import 'dotenv/config';
+import cors from 'cors';
+// Імпортуємо middleware
+import { errors } from 'celebrate';
 import { connectMongoDB } from './db/connectMongoDB.js';
+import { logger } from './middleware/logger.js';
 import { notFoundHandler } from './middleware/notFoundHandler.js';
 import { errorHandler } from './middleware/errorHandler.js';
-import { logger } from './middleware/logger.js';
 import router from './routes/notesRoutes.js';
 
 const app = express();
@@ -30,9 +32,13 @@ app.use(logger);
 // Middleware - оголошення маршрутів
 app.use(router);
 
-// Мiddleware для обробки всіх запитів, що не відповідають жодному наявному маршруту
+// обробка 404
 app.use(notFoundHandler);
 
+// обробка глобальних помилок від celebrate (валідація)
+app.use(errors());
+
+// глобальна обробка інших помилок
 app.use(errorHandler);
 
 // виклик ф-ції підключення бази даних
