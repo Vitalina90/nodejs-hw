@@ -31,7 +31,7 @@ const noteSchema = new Schema(
   },
 );
 
-//* Single field index — індекс по одному полю
+//* Створюємо складений індекс для полів
 noteSchema.index({
   tag: 1,
   userId: 1,
