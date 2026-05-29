@@ -32,7 +32,10 @@ const noteSchema = new Schema(
 );
 
 //* Single field index — індекс по одному полю
-noteSchema.index({ tag: 1 });
+noteSchema.index({
+  tag: 1,
+  userId: 1,
+});
 
 //* Створюємо модель нотаток
 export const Note = model('Note', noteSchema);
