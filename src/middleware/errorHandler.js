@@ -1,5 +1,6 @@
 import { HttpError } from 'http-errors';
 
+//* Мiddleware, що перехоплює помилки
 export const errorHandler = (err, req, res, next) => {
   const isProd = process.env.NODE_ENV === 'production';
 
@@ -7,7 +8,6 @@ export const errorHandler = (err, req, res, next) => {
     return res.status(err.status).json({ message: err.message || err.name });
   }
   // if (isHttpError(err)){};
-  // Мiddleware що перехоплює помилки
   res.status(500).json({
     message: isProd ? 'Server error' : err.message,
   });

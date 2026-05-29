@@ -1,9 +1,14 @@
 import { Schema, model } from 'mongoose';
 import { TAGS } from '../constants/tags.js';
 
-// оголошуємо схему-колекції (документ), його властивості (склад, тип і т.д)
+//* Оголошуємо схему-колекції (документ), його властивості (склад, тип і т.д)
 const noteSchema = new Schema(
   {
+    userId: {
+      type: Schema.Types.ObjectId,
+      required: true,
+      ref: 'User', // зв'язок між моделями `User` та `Note`
+    },
     title: {
       type: String, // тип даних (String, Number, Boolean)
       required: true, // чи поле обов'язкове
@@ -22,12 +27,12 @@ const noteSchema = new Schema(
   },
   {
     timestamps: true, // автоматично додає createdAt і updatedAt
-    versionKey: false, //  — вимикає службове поле __v
+    versionKey: false, // вимикає службове поле __v
   },
 );
 
-// Single field index — індекс по одному полю
+//* Single field index — індекс по одному полю
 noteSchema.index({ tag: 1 });
 
-//створюємо модель
+//* Створюємо модель нотаток
 export const Note = model('Note', noteSchema);

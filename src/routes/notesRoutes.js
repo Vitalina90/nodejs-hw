@@ -13,11 +13,13 @@ import {
   noteIdSchema,
   updateNoteSchema,
 } from '../validations/notesValidation.js';
+import { authenticate } from '../middleware/authenticate.js';
 
-// Оголошення маршрутів
+//* Оголошення маршрутів
 const router = Router(); // локальна версія арр, яка реєструє наші маршрути
 
-// notes?page=1&perPage=15&tag=Todo&search=hello
+router.use('/notes', authenticate); // захищає всі маршрути '/notes'
+
 router.get('/notes', celebrate(getAllNotesSchema), getAllNotes);
 
 router.get('/notes/:noteId', celebrate(noteIdSchema), getNoteById);

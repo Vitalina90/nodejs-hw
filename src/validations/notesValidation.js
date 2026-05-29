@@ -2,6 +2,7 @@ import { Segments, Joi } from 'celebrate';
 import { isValidObjectId } from 'mongoose';
 import { TAGS } from '../constants/tags.js';
 
+//* Схема валідації рядка запиту
 export const getAllNotesSchema = {
   [Segments.QUERY]: Joi.object({
     page: Joi.number().integer().min(1).default(1),
@@ -13,7 +14,7 @@ export const getAllNotesSchema = {
   }),
 };
 
-// об'єкт валідації тіла запиту
+//* Схема валідації тіла запиту
 export const createNoteSchema = {
   [Segments.BODY]: Joi.object({
     title: Joi.string().min(1).required(),
@@ -26,7 +27,7 @@ export const createNoteSchema = {
 // Якщо все погано, ID не валідний, повернути helpers.message("SUPER BAD ID!!!")
 // isValidObjectId(value) > true/false
 
-// Кастомний валідатор для ObjectId
+//* Кастомний валідатор для ObjectId
 const objectIdValidator = (value, helpers) => {
   if (isValidObjectId(value)) {
     // утиліта з Mongoose, яка перевіряє, чи рядок відповідає формату MongoDB ObjectId
@@ -35,7 +36,7 @@ const objectIdValidator = (value, helpers) => {
   return helpers.message('Invalid id format');
 };
 
-// Схема для перевірки параметра noteId/валідація
+//* Схема валідації для перевірки параметра маршруту noteId
 export const noteIdSchema = {
   [Segments.PARAMS]: Joi.object({
     noteId: Joi.string().custom(objectIdValidator).required(), // кастомний валідатор

@@ -1,7 +1,7 @@
 import mongoose from 'mongoose';
 import { Note } from '../models/note.js';
 
-// підключення до бази даних
+//* Підключення до бази даних
 // ф-цію викликаємо у server.js після реєстрації всіх контролерів
 export async function connectMongoDB() {
   try {
